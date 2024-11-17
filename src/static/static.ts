@@ -11,19 +11,19 @@ export const authors = [
   {
     id: "1",
     name: "Alice Johnson",
-    img: "https://g-zwkebgiacpe.vusercontent.net/placeholder.svg?height=40&width=40",
+    img: "src/assets/a1.jpg",
     direction: "Blockchain Enthusiast",
   },
   {
     id: "2",
     name: "Bob Smith",
-    img: "https://g-zwkebgiacpe.vusercontent.net/placeholder.svg?height=40&width=40",
+    img: "src/assets/a2.jpg",
     direction: "Crypto Analyst",
   },
   {
     id: "3",
     name: "Carol Williams",
-    img: "https://g-zwkebgiacpe.vusercontent.net/placeholder.svg?height=40&width=40",
+    img: "src/assets/a3.jpg",
     direction: "Tech Journalist",
   },
 ];
@@ -33,7 +33,7 @@ export const blogs = [
     id: "1",
     title: "The Future of Blockchain Technology",
     author: "John Doe",
-    img: "https://g-zwkebgiacpe.vusercontent.net/placeholder.svg?height=200&width=400",
+    img: "src/assets/1.jpg",
     date: "May 16, 2024",
     time: "15 min read",
     intro:
@@ -44,7 +44,7 @@ export const blogs = [
     id: "2",
     title: "Decentralized Finance (DeFi) Explained",
     author: "Jane Smith",
-    img: "https://g-zwkebgiacpe.vusercontent.net/placeholder.svg?height=200&width=400",
+    img: "src/assets/2.jpg",
     date: "May 28, 2023",
     time: "7 min read",
     intro:
@@ -55,7 +55,7 @@ export const blogs = [
     id: "3",
     title: "Cryptocurrency: A Beginner's Guide",
     author: "Alex Johnson",
-    img: "https://g-zwkebgiacpe.vusercontent.net/placeholder.svg?height=200&width=400",
+    img: "src/assets/3.png",
     date: "May 18, 2023",
     time: "5 min read",
     intro:
