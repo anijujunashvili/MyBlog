@@ -19,7 +19,7 @@ export const LoginPage = () => {
     });
   };
 
-  const { data, mutate: handleLogin } = useMutation({
+  const { mutate: handleLogin } = useMutation({
     mutationKey: ["login"],
     mutationFn: login,
   });
@@ -51,7 +51,6 @@ export const LoginPage = () => {
               {t("login.login-headline")}
             </div>
 
-            {data?.user && <p>თქვენ დალოგინდით - {fields.email}</p>}
             <div>
               <form onSubmit={handleSubmit}>
                 <div>
