@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { register } from "@/supabase/auth/index.ts";
+import { useMutation } from "@tanstack/react-query";
 import {
   Regbtn,
   OuterCont,
@@ -18,6 +20,14 @@ export const RegistrationPage = () => {
     password: "",
     confirmPassword: "",
   });
+
+  const [regFields, setRegFields] = useState({ email: "", password: "" });
+
+  const { mutate: handleRegistration, isSuccess } = useMutation({
+    mutationKey: ["registration"],
+    mutationFn: register,
+  });
+
   const { t } = useTranslation();
   const handleEmail = (e: ChangeEvent<HTMLInputElement>) => {
     const value = (e.target as HTMLInputElement).value;
@@ -28,6 +38,8 @@ export const RegistrationPage = () => {
       password: fields.password,
       confirmPassword: fields.confirmPassword,
     });
+
+    setRegFields({ email: value, password: fields.password });
   };
 
   const handleName = (e: ChangeEvent<HTMLInputElement>) => {
@@ -50,6 +62,7 @@ export const RegistrationPage = () => {
       password: value,
       confirmPassword: fields.confirmPassword,
     });
+    setRegFields({ email: fields.email, password: value });
   };
 
   const handleConfirmPassword = (e: ChangeEvent<HTMLInputElement>) => {
@@ -65,14 +78,19 @@ export const RegistrationPage = () => {
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    console.log(fields);
+
+    if (!!regFields.email && !!regFields.password) {
+      handleRegistration(regFields);
+    }
   };
+
   return (
     <>
       <div className={OuterCont()}>
         <div className={cont()}>
           <div className="flex flex-col space-y-1.5 p-6">
             <div className={headline()}>{t("registration.reg-headline")}</div>
+            {isSuccess && <p>თქვენ წარმატებით დარეგისტრირდით</p>}
             <div>
               <form onSubmit={handleSubmit}>
                 <div>

@@ -1,6 +1,7 @@
 import PopularTags from "./components/popular-tags.tsx";
 import FeaturedAuthors from "./components/featured-authors.tsx";
-import ArticlesList from "./components/articles-list.tsx";
+import { ArticlesList } from "@/components/articles-list";
+
 export const HomePageView = () => {
   return (
     <>

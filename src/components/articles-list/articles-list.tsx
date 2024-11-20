@@ -1,8 +1,13 @@
 import { blogs } from "@/static/static.ts";
 import { Link } from "react-router-dom";
-import { blogTabs, articleCont, articleImg, artHead } from "../home.styles.ts";
+import {
+  blogTabs,
+  articleCont,
+  articleImg,
+  artHead,
+} from "./articles.style.ts";
 
-const ArticlesList = () => {
+export const ArticlesList = () => {
   return (
     <>
       {blogs.map((blog) => {
@@ -10,7 +15,11 @@ const ArticlesList = () => {
           <div className={articleCont()} key={blog.id}>
             <div className="flex flex-col space-y-1.5 p-6">
               <div className="mb-4">
-                <img src={blog.img} alt={blog.title} className={articleImg()} />
+                <img
+                  src={`/${blog.img}`}
+                  alt={blog.title}
+                  className={articleImg()}
+                />
               </div>
               <div className="text-2xl font-bold">{blog.title}</div>
               <div className={artHead()}>
@@ -43,5 +52,3 @@ const ArticlesList = () => {
     </>
   );
 };
-
-export default ArticlesList;

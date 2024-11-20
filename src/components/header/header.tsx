@@ -7,7 +7,7 @@ export const Header = () => {
     <>
       <header className="border-b">
         <div className="container mx-auto flex items-center justify-between px-4 py-4">
-          <Link to="/home" className="text-2xl font-bold">
+          <Link to="/" className="text-2xl font-bold">
             MyBlog
           </Link>
           <HeaderMenu />

@@ -16,29 +16,34 @@ import LoginEn from "./en/login.json";
 import RegKa from "./ka/registration.json";
 import RegEn from "./en/registration.json";
 
+import AuthorKa from "./ka/author-page.json";
+import AuthorEn from "./en/author-page.json";
+
 i18n.use(initReactI18next).init({
   resources: {
     ka: {
       translation: {
         "home-page": HomeKa,
-        "header": HeaderKa,
-        "footer": FooterKa,
-        "login": LoginKa,
-        "registration": RegKa,
+        header: HeaderKa,
+        footer: FooterKa,
+        login: LoginKa,
+        registration: RegKa,
+        author: AuthorKa,
       },
     },
     en: {
       translation: {
         "home-page": HomeEn,
-        "header": HeaderEn,
-        "footer": FooterEn,
-        "login": LoginEn,
-        "registration": RegEn,
+        header: HeaderEn,
+        footer: FooterEn,
+        login: LoginEn,
+        registration: RegEn,
+        author: AuthorEn,
       },
     },
   },
-  lng: "ka",
-  fallbackLng: "en",
+  lng: "en",
+  fallbackLng: "ka",
 
   interpolation: {
     escapeValue: false,

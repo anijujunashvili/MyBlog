@@ -1,8 +1,8 @@
 export function SuspenseComponent() {
+  console.log(12);
   return (
     <>
-      <div className="hero-suspense">
-        <div className="suspence-loader"></div>
+      <div>
         <h2>Loading...</h2>
       </div>
     </>

@@ -4,6 +4,8 @@ import { Link } from "react-router-dom";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { loginBtn, cont, OuterCont, label } from "./login.style.ts";
+import { login } from "@/supabase/auth/index.ts";
+import { useMutation } from "@tanstack/react-query";
 
 export const LoginPage = () => {
   const [fields, setFields] = useState({ email: "", password: "" });
@@ -17,6 +19,11 @@ export const LoginPage = () => {
     });
   };
 
+  const { data, mutate: handleLogin } = useMutation({
+    mutationKey: ["login"],
+    mutationFn: login,
+  });
+
   const handlePassword = (e: ChangeEvent<HTMLInputElement>) => {
     const value = (e.target as HTMLInputElement).value;
 
@@ -26,9 +33,13 @@ export const LoginPage = () => {
     });
   };
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     console.log(fields);
+    if (!!fields.email && !!fields.password) {
+      handleLogin(fields);
+      //console.log("login:", data?.user);
+    }
   };
 
   return (
@@ -39,6 +50,8 @@ export const LoginPage = () => {
             <div className="text-center text-2xl font-bold">
               {t("login.login-headline")}
             </div>
+
+            {data?.user && <p>თქვენ დალოგინდით - {fields.email}</p>}
             <div>
               <form onSubmit={handleSubmit}>
                 <div>

@@ -16,7 +16,7 @@ const FeaturedAuthors = () => {
           {authors.map((author) => {
             return (
               <li key={author.id}>
-                <Link className="flex items-center space-x-4" to="/authors">
+                <Link className="flex items-center space-x-4" to="/author/1">
                   <span className="relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full">
                     <img
                       className="aspect-square h-full w-full"

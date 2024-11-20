@@ -12,7 +12,7 @@ const HeaderMenu = () => {
   return (
     <ul className="bg-test flex">
       <li className="mr-6">
-        <NavLink className={MenuStyle} to="home">
+        <NavLink className={MenuStyle} to="/">
           {t("header.home")}
         </NavLink>
       </li>
@@ -22,7 +22,7 @@ const HeaderMenu = () => {
         </NavLink>
       </li>
       <li className="mr-6">
-        <NavLink className={MenuStyle} to="/">
+        <NavLink className={MenuStyle} to="/about">
           {t("header.about")}
         </NavLink>
       </li>

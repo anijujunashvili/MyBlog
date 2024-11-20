@@ -7,7 +7,10 @@ export const Layout = () => {
     <>
       <div>
         <Header />
-        <Outlet />
+        <main className="flex-grow px-4 py-8">
+          <Outlet />
+        </main>
+
         <Footer />
       </div>
     </>
