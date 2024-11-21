@@ -2,10 +2,7 @@
   "builds": [
     {
       "src": "server.cjs",
-      "use": "@vercel/node",
-      "config": {
-        "includeFiles": ["db.json"]
-      }
+      "use": "@vercel/node"
     },
     {
       "src": "package.json",
