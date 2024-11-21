@@ -19,7 +19,7 @@ export const LoginPage = () => {
     });
   };
 
-  const { mutate: handleLogin } = useMutation({
+  const { data, mutate: handleLogin } = useMutation({
     mutationKey: ["login"],
     mutationFn: login,
   });
@@ -38,7 +38,10 @@ export const LoginPage = () => {
     console.log(fields);
     if (!!fields.email && !!fields.password) {
       handleLogin(fields);
-      //console.log("login:", data?.user);
+      //console.log("login:", data);
+
+      //როცა პაროლი არასწორად შემყავს 400 კოდს აბრუნებს მაგრამ useMutation isSuccess მაგ შემთხვევაშიც true-ა. ამიტომ
+      //data?.error != null ამას ვამოწმებ
     }
   };
 
@@ -50,7 +53,9 @@ export const LoginPage = () => {
             <div className="text-center text-2xl font-bold">
               {t("login.login-headline")}
             </div>
-
+            {data && data?.error != null
+              ? "სამწუხაროდ პაროლი ან მეილი არ არის სწორი"
+              : ""}
             <div>
               <form onSubmit={handleSubmit}>
                 <div>
