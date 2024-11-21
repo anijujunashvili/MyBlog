@@ -11,7 +11,10 @@ const OurMission = () => {
         </p>
       </div>
       <div className="relative h-64 md:h-full">
-        <img src="src/assets/1.jpg" alt="Team collaboration" />
+        <img
+          src="https://img.freepik.com/premium-photo/businessman-holding-our-mission-text_220873-4286.jpg"
+          alt="Team collaboration"
+        />
       </div>
     </div>
   );
