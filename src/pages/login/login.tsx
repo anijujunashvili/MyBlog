@@ -55,7 +55,9 @@ export const LoginPage = () => {
             </div>
             {data && data?.error != null
               ? "სამწუხაროდ პაროლი ან მეილი არ არის სწორი"
-              : ""}
+              : data
+                ? `მოგესალმებით ${fields.email}`
+                : ""}
             <div>
               <form onSubmit={handleSubmit}>
                 <div>
