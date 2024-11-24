@@ -19,6 +19,9 @@ import RegEn from "./en/registration.json";
 import AuthorKa from "./ka/author-page.json";
 import AuthorEn from "./en/author-page.json";
 
+import ProfileKa from "./ka/profile.json";
+import ProfileEn from "./en/profile.json";
+
 i18n.use(initReactI18next).init({
   resources: {
     ka: {
@@ -29,6 +32,7 @@ i18n.use(initReactI18next).init({
         login: LoginKa,
         registration: RegKa,
         author: AuthorKa,
+        profile: ProfileKa,
       },
     },
     en: {
@@ -39,6 +43,7 @@ i18n.use(initReactI18next).init({
         login: LoginEn,
         registration: RegEn,
         author: AuthorEn,
+        profile: ProfileEn,
       },
     },
   },

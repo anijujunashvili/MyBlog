@@ -11,10 +11,32 @@ import { LoginPage } from "./pages/login";
 import { ThemeProvider } from "@/components/theme-provider";
 import { BrowserRouter } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useEffect } from "react";
+import { supabase } from "@/supabase";
+import { userAtom } from "./store/auth";
+import { useSetAtom } from "jotai";
+import AuthGuard from "@/components/route-guards/auth";
+import { UserProfilePage } from "@/pages/profile";
 
 const queryClient = new QueryClient();
 
 function App() {
+  const setUser = useSetAtom(userAtom);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session);
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, [setUser]);
+
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter future={{ v7_relativeSplatPath: true }}>
@@ -32,8 +54,23 @@ function App() {
                 />
                 <Route path="home" element={<HomePageView />} />
                 <Route path="about" element={<AboutPage />} />
-                <Route path="login" element={<LoginPage />} />
-                <Route path="registration" element={<RegistrationPage />} />
+                <Route
+                  path="login"
+                  element={
+                    <AuthGuard>
+                      <LoginPage />
+                    </AuthGuard>
+                  }
+                />
+                <Route
+                  path="registration"
+                  element={
+                    <AuthGuard>
+                      <RegistrationPage />
+                    </AuthGuard>
+                  }
+                />
+                <Route path="profile" element={<UserProfilePage />} />
                 <Route path="author/:id" element={<AuthorPageView />} />
                 <Route path="*" element={<NotFoundPage />} />
               </Route>

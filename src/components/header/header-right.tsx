@@ -1,22 +1,16 @@
-import { Link } from "react-router-dom";
-import { LoginBtn } from "./header.styles.ts";
 import ChangeLangs from "./change-langs.tsx";
 import ChangeTheme from "./change-theme.tsx";
 import SearchComp from "./search.tsx";
-import { useTranslation } from "react-i18next";
+import AuthBtn from "./auth-btn.tsx";
 
 const HeaderRight = () => {
-  const { t } = useTranslation();
   return (
     <>
       <div className="flex items-center space-x-4">
         <div className="relative flex items-center">
           <SearchComp />
         </div>
-
-        <Link to="/login">
-          <button className={LoginBtn()}>{t("header.sign-in")}</button>
-        </Link>
+        <AuthBtn />
         <div className="relative">
           <ChangeLangs />
         </div>
