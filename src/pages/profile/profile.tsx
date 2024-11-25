@@ -4,16 +4,15 @@ import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { fillUserInfo, getUserInfo } from "@/supabase/profile";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useAtomValue } from "jotai";
+import { useAtom } from "jotai";
 import { userAtom } from "@/store/auth";
-// import { Navigate } from "react-router-dom";
 
 import { useTranslation } from "react-i18next";
 type profileRow = Database["public"]["Tables"]["profiles"]["Row"];
 type profilePayloadtype = Omit<profileRow, "id" | "updated_at">;
 
 export const UserProfilePage = () => {
-  const user = useAtomValue(userAtom);
+  const [user] = useAtom(userAtom);
 
   const { t } = useTranslation();
 
@@ -24,25 +23,31 @@ export const UserProfilePage = () => {
     full_name_en: "",
   });
 
-  const userId = user?.user?.id as string;
+  const userId = user?.user?.id;
 
   useEffect(() => {
     if (userId) {
       getUserInfo(userId).then((res) => {
-        const data = res?.data[0];
-        if (data) {
-          setProfilePayload({
-            phone: data.phone,
-            full_name_ka: data.full_name_ka,
-            full_name_en: data.full_name_en,
-            avatar_url: data.avatar_url,
-          });
+        if (res?.data !== null) {
+          const data = res?.data[0];
+          if (data) {
+            setProfilePayload({
+              phone: data.phone,
+              full_name_ka: data.full_name_ka,
+              full_name_en: data.full_name_en,
+              avatar_url: data.avatar_url,
+            });
+          }
         }
       });
     }
   }, [user, userId]);
 
-  const { mutate: handleFillUserInfo } = useMutation({
+  const {
+    mutate: handleFillUserInfo,
+    isPending,
+    isSuccess,
+  } = useMutation({
     mutationKey: ["fill_user_info"],
     mutationFn: fillUserInfo,
   });
@@ -72,6 +77,14 @@ export const UserProfilePage = () => {
             <h1 className="pt-6 text-center text-xl font-bold">
               {t("profile.headline")}
             </h1>
+            <h3 className="text-center">
+              {isPending ? "მიმდინარეობს მონაცემების დამუშავება..." : ""}
+            </h3>
+            {isSuccess && (
+              <h3 className="text-center text-green-600">
+                მონაცემები განახლებულია !
+              </h3>
+            )}
             <div className="flex flex-col space-y-1.5 p-6">
               <form onSubmit={handleSubmit}>
                 <div>

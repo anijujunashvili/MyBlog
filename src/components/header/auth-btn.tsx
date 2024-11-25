@@ -14,31 +14,22 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useEffect, useState } from "react";
-type stateType = {
-  name: string;
-  avatar: string;
-};
+// import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+
 const AuthBtn = () => {
   const { t } = useTranslation();
-
   const user = useAtomValue(userAtom);
-  const [userInfo, setUserInfo] = useState<stateType>({ name: "", avatar: "" });
+  // const [userInfo, setUserInfo] = useState({ name: "", avatar: "" });
 
   const userId = user?.user?.id as string;
 
-  useEffect(() => {
-    if (userId) {
-      getUserInfo(userId).then((res) => {
-        const data = res?.data[0];
-
-        setUserInfo({
-          name: data?.full_name_ka as string,
-          avatar: data?.avatar_url as string,
-        });
-      });
-    }
-  }, [user, userId]);
+  const { data } = useQuery({
+    queryKey: ["getUser", userId],
+    queryFn: () => getUserInfo(userId),
+    enabled: !!userId,
+    select: (data) => data?.data?.[0],
+  });
 
   return (
     <>
@@ -46,9 +37,9 @@ const AuthBtn = () => {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Avatar className="cursor-pointer">
-              <AvatarImage src={userInfo.avatar} alt="user image" />
+              <AvatarImage src={String(data?.avatar_url)} alt="user image" />
 
-              <AvatarFallback>{userInfo.name[0]}</AvatarFallback>
+              <AvatarFallback>{data?.full_name_ka}</AvatarFallback>
             </Avatar>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-24 items-end">

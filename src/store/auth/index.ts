@@ -1,3 +1,4 @@
 import { atom } from "jotai";
 
-export const userAtom = atom();
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const userAtom = atom<any>();

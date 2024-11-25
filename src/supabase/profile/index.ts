@@ -16,6 +16,9 @@ export const fillUserInfo = async (
 };
 
 export const getUserInfo = async (id: string | number) => {
+  if (!id) {
+    throw new Error("Id undefined");
+  }
   const data = await supabase.from("profiles").select("*").eq("id", id);
 
   return data;
