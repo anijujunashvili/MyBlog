@@ -1,4 +1,4 @@
 import { atom } from "jotai";
+import { Session } from "@supabase/supabase-js";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const userAtom = atom<any>();
+export const userAtom = atom<Session | null>(null);
