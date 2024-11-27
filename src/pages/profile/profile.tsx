@@ -52,11 +52,11 @@ export const UserProfilePage = () => {
               {t("profile.headline")}
             </h1>
             <h3 className="text-center">
-              {isPending ? "მიმდინარეობს მონაცემების დამუშავება..." : ""}
+              {isPending ? t("profile.pending") : ""}
             </h3>
             {isSuccess && (
               <h3 className="text-center text-green-600">
-                მონაცემები განახლებულია !
+                {t("profile.updated")}
               </h3>
             )}
             <div className="flex flex-col space-y-1.5 p-6">
@@ -202,7 +202,9 @@ export const UserProfilePage = () => {
           </div>
         </div>
       ) : (
-        <div>ასეთი მომხმაებელი არ მოიძებნა</div>
+        <div className="container h-screen text-center">
+          {t("profile.no_user")}
+        </div>
       )}
     </>
   );

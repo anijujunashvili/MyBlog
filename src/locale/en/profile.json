@@ -4,5 +4,8 @@
   "avatar_url": "Avatar Url",
   "full_name_ka": "Full name (ka)",
   "full_name_en": "Full name (en)",
-  "phone": "Phone"
+  "phone": "Phone",
+  "pending": "Data is being processed...",
+  "updated": "Data updated!",
+  "no_user": "No user found."
 }
