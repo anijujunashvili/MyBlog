@@ -1,0 +1,11 @@
+{
+  "email": "Entered value does not match email format.",
+  "password": "Password must consist of at least 6 characters.",
+  "login_error": "The email or password is incorrect.",
+  "email_length": "Email must be at least 13 characters long.",
+  "name_length": "Name must be at least 10 characters long.",
+  "reg_done": "You have successfully registered.",
+  "confirm_password": "Your passwords do no match.",
+  "avatar": "Avatar url must be at least 30 characters long.",
+  "phone": "Phone must be at least 9 characters long."
+}

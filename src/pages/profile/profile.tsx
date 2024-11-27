@@ -1,74 +1,48 @@
-import { Database } from "@/supabase/supabase.types";
-import { useMutation } from "@tanstack/react-query";
-import { ChangeEvent, FormEvent, useEffect, useState } from "react";
-import { fillUserInfo, getUserInfo } from "@/supabase/profile";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useAtom } from "jotai";
 import { userAtom } from "@/store/auth";
-
+import { useForm, Controller } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-type profileRow = Database["public"]["Tables"]["profiles"]["Row"];
-type profilePayloadtype = Omit<profileRow, "id" | "updated_at">;
+import { useEffect } from "react";
+import { profilePayloadtype } from "./types/profile.types.ts";
+import { useProfile } from "./hooks/use-profile.ts";
 
 export const UserProfilePage = () => {
   const [user] = useAtom(userAtom);
 
-  const { t } = useTranslation();
-
-  const [profilePayload, setProfilePayload] = useState<profilePayloadtype>({
-    avatar_url: "",
-    full_name_ka: "",
-    phone: "",
-    full_name_en: "",
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+  } = useForm<profilePayloadtype>({
+    defaultValues: {
+      avatar_url: " ",
+      full_name_ka: " ",
+      full_name_en: " ",
+      phone: " ",
+    },
+    mode: "onChange",
   });
+
+  const { t } = useTranslation();
 
   const userId = user?.user?.id;
 
+  const { userInfo, isPending, isSuccess, onSubmit } = useProfile(
+    userId as string,
+  );
+
   useEffect(() => {
-    if (userId) {
-      getUserInfo(userId).then((res) => {
-        if (res?.data !== null) {
-          const data = res?.data[0];
-          if (data) {
-            setProfilePayload({
-              phone: data.phone,
-              full_name_ka: data.full_name_ka,
-              full_name_en: data.full_name_en,
-              avatar_url: data.avatar_url,
-            });
-          }
-        }
-      });
+    if (userInfo) {
+      setValue("avatar_url", userInfo.avatar_url);
+      setValue("full_name_ka", userInfo.full_name_ka);
+      setValue("full_name_en", userInfo.full_name_en);
+      setValue("phone", userInfo.phone);
     }
-  }, [user, userId]);
+  }, [userInfo, setValue]);
 
-  const {
-    mutate: handleFillUserInfo,
-    isPending,
-    isSuccess,
-  } = useMutation({
-    mutationKey: ["fill_user_info"],
-    mutationFn: fillUserInfo,
-  });
-
-  const handleInput = (e: ChangeEvent<HTMLInputElement>, name: string) => {
-    const value = (e.target as HTMLInputElement).value;
-
-    setProfilePayload({
-      phone: name === "phone" ? value : profilePayload.phone,
-      full_name_en:
-        name === "full_name_en" ? value : profilePayload.full_name_en,
-      full_name_ka:
-        name === "full_name_ka" ? value : profilePayload.full_name_ka,
-      avatar_url: name === "avatar_url" ? value : profilePayload.avatar_url,
-    });
-  };
-
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    handleFillUserInfo({ ...profilePayload, id: String(user?.user?.id) });
-  };
   return (
     <>
       {user ? (
@@ -86,65 +60,136 @@ export const UserProfilePage = () => {
               </h3>
             )}
             <div className="flex flex-col space-y-1.5 p-6">
-              <form onSubmit={handleSubmit}>
+              <form onSubmit={handleSubmit(onSubmit)}>
                 <div>
-                  <label htmlFor="avatar_url" className="mt-4 font-medium">
+                  <label className="mt-4 font-medium">
                     {t("profile.avatar_url")}
                   </label>
                   <div className="flex flex-row justify-between space-x-2">
-                    <Input
-                      type="text"
-                      id="avatar_url"
-                      className="my-2 w-4/5"
+                    <Controller
                       name="avatar_url"
-                      value={String(profilePayload.avatar_url)}
-                      onChange={(e) => handleInput(e, "avatar_url")}
+                      control={control}
+                      rules={{
+                        required: true,
+                        minLength: {
+                          value: 30,
+                          message: "validate.avatar",
+                        },
+                      }}
+                      render={({ field: { onChange, value } }) => {
+                        return (
+                          <Input
+                            onChange={onChange}
+                            type="text"
+                            value={String(value)}
+                            className="mb-2 mt-2"
+                          />
+                        );
+                      }}
                     />
+
                     <img
-                      src={String(profilePayload.avatar_url)}
-                      alt={String(profilePayload.full_name_ka)}
+                      src={String(userInfo?.avatar_url)}
+                      alt={String(userInfo?.full_name_ka)}
                       className="flex h-14 w-14 rounded-full"
                     />
                   </div>
+                  {errors.avatar_url && (
+                    <span role="alert" className="pt-2 text-red-500">
+                      {t(String(errors.avatar_url.message))}
+                    </span>
+                  )}
                 </div>
                 <div>
                   <label htmlFor="full_name_ka" className="mt-4 font-medium">
                     {t("profile.full_name_ka")}
                   </label>
-                  <Input
-                    type="text"
-                    id="full_name_ka"
-                    className="mt-2"
+                  <Controller
                     name="full_name_ka"
-                    value={String(profilePayload.full_name_ka)}
-                    onChange={(e) => handleInput(e, "full_name_ka")}
+                    control={control}
+                    rules={{
+                      required: true,
+                      minLength: {
+                        value: 10,
+                        message: "validate.name_length",
+                      },
+                    }}
+                    render={({ field: { onChange, value } }) => {
+                      return (
+                        <Input
+                          onChange={onChange}
+                          value={String(value)}
+                          className="mb-2 mt-2"
+                        />
+                      );
+                    }}
                   />
+                  {errors.full_name_ka && (
+                    <span role="alert" className="pt-2 text-red-500">
+                      {t(String(errors.full_name_ka.message))}
+                    </span>
+                  )}
                 </div>
                 <div className="mt-4">
                   <label htmlFor="full_name_en" className="mt-4 font-medium">
                     {t("profile.full_name_en")}
                   </label>
-                  <Input
-                    type="text"
-                    id="full_name_en"
-                    className="mt-2"
+                  <Controller
                     name="full_name_en"
-                    value={String(profilePayload.full_name_en)}
-                    onChange={(e) => handleInput(e, "full_name_en")}
+                    control={control}
+                    rules={{
+                      required: true,
+                      minLength: {
+                        value: 10,
+                        message: "validate.name_length",
+                      },
+                    }}
+                    render={({ field: { onChange, value } }) => {
+                      return (
+                        <Input
+                          onChange={onChange}
+                          value={String(value)}
+                          className="mb-2 mt-2"
+                        />
+                      );
+                    }}
                   />
+                  {errors.full_name_en && (
+                    <span role="alert" className="pt-2 text-red-500">
+                      {t(String(errors.full_name_en.message))}
+                    </span>
+                  )}
                 </div>
                 <div className="mt-4">
                   <label htmlFor="phone" className="mt-4 font-medium">
                     {t("profile.phone")}
                   </label>
-                  <Input
-                    type="text"
-                    id="phone"
-                    className="mt-2"
+                  <Controller
                     name="phone"
-                    value={String(profilePayload.phone)}
-                    onChange={(e) => handleInput(e, "phone")}
+                    control={control}
+                    rules={{
+                      required: true,
+                      minLength: {
+                        value: 9,
+                        message: "validate.phone",
+                      },
+                    }}
+                    render={({ field: { onBlur, value, onChange } }) => {
+                      return (
+                        <Input
+                          onChange={onChange}
+                          onBlur={onBlur}
+                          value={String(value)}
+                          className="mb-2 mt-2"
+                        />
+                      );
+                    }}
                   />
+                  {errors.phone && (
+                    <span role="alert" className="pt-2 text-red-500">
+                      {t(String(errors.phone.message))}
+                    </span>
+                  )}
                 </div>
                 <Button
                   type="submit"

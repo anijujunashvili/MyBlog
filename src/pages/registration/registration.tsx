@@ -1,10 +1,8 @@
 import { Input } from "@/components/ui/input.tsx";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { ChangeEvent, FormEvent, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { register } from "@/supabase/auth/index.ts";
-import { useMutation } from "@tanstack/react-query";
+import { useForm, Controller } from "react-hook-form";
 import {
   Regbtn,
   OuterCont,
@@ -12,77 +10,22 @@ import {
   label,
   headline,
 } from "./registration.styles.ts";
+import { registrationType } from "./types/registration.types.ts";
+import { useRegistration } from "./hooks/use-registration.ts";
 
 export const RegistrationPage = () => {
-  const [fields, setFields] = useState({
-    name: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    watch,
+  } = useForm<registrationType>({
+    defaultValues: { name: "", email: "", password: "", confirm_password: "" },
+    mode: "onChange",
   });
 
-  const [regFields, setRegFields] = useState({ email: "", password: "" });
-
-  const { mutate: handleRegistration, isSuccess } = useMutation({
-    mutationKey: ["registration"],
-    mutationFn: register,
-  });
-
+  const { isSuccess, onSubmit } = useRegistration();
   const { t } = useTranslation();
-  const handleEmail = (e: ChangeEvent<HTMLInputElement>) => {
-    const value = (e.target as HTMLInputElement).value;
-
-    setFields({
-      name: fields.name,
-      email: value,
-      password: fields.password,
-      confirmPassword: fields.confirmPassword,
-    });
-
-    setRegFields({ email: value, password: fields.password });
-  };
-
-  const handleName = (e: ChangeEvent<HTMLInputElement>) => {
-    const value = (e.target as HTMLInputElement).value;
-
-    setFields({
-      name: value,
-      email: fields.email,
-      password: fields.password,
-      confirmPassword: fields.confirmPassword,
-    });
-  };
-
-  const handlePassword = (e: ChangeEvent<HTMLInputElement>) => {
-    const value = (e.target as HTMLInputElement).value;
-
-    setFields({
-      name: fields.name,
-      email: fields.email,
-      password: value,
-      confirmPassword: fields.confirmPassword,
-    });
-    setRegFields({ email: fields.email, password: value });
-  };
-
-  const handleConfirmPassword = (e: ChangeEvent<HTMLInputElement>) => {
-    const value = (e.target as HTMLInputElement).value;
-
-    setFields({
-      name: fields.name,
-      email: fields.email,
-      password: fields.password,
-      confirmPassword: value,
-    });
-  };
-
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-
-    if (!!regFields.email && !!regFields.password) {
-      handleRegistration(regFields);
-    }
-  };
 
   return (
     <>
@@ -90,62 +33,137 @@ export const RegistrationPage = () => {
         <div className={cont()}>
           <div className="flex flex-col space-y-1.5 p-6">
             <div className={headline()}>{t("registration.reg-headline")}</div>
-            {isSuccess && <p>თქვენ წარმატებით დარეგისტრირდით</p>}
+            {isSuccess && <p>{t("validate.reg_done")}</p>}
             <div>
-              <form onSubmit={handleSubmit}>
+              <form onSubmit={handleSubmit(onSubmit)}>
                 <div>
                   <label className={label()} htmlFor="name">
                     {t("registration.name")}
                   </label>
-                  <Input
-                    type="text"
-                    id="name"
-                    className="mt-2"
+                  <Controller
                     name="name"
-                    value={fields.name}
-                    onChange={handleName}
-                    placeholder="Ani Zhuzhunashvili"
+                    control={control}
+                    rules={{
+                      required: true,
+                      minLength: {
+                        value: 10,
+                        message: "validate.name_length",
+                      },
+                    }}
+                    render={({ field: { onChange, value } }) => {
+                      return (
+                        <Input
+                          onChange={onChange}
+                          value={value}
+                          className="mb-2 mt-2"
+                          placeholder="Ani Zhuzhunashvili"
+                        />
+                      );
+                    }}
                   />
+                  {errors.name && (
+                    <span role="alert" className="pt-2 text-red-500">
+                      {t(String(errors.name.message))}
+                    </span>
+                  )}
                 </div>
                 <div>
                   <label className={label()} htmlFor="email">
                     {t("registration.email")}
                   </label>
-                  <Input
-                    type="text"
-                    id="email"
-                    className="mt-2"
+                  <Controller
                     name="email"
-                    value={fields.email}
-                    onChange={handleEmail}
-                    placeholder="ana@example.com"
+                    control={control}
+                    rules={{
+                      required: true,
+                      pattern: {
+                        value: /\S+@\S+\.\S+/,
+                        message: "validate.email",
+                      },
+                      minLength: {
+                        value: 13,
+                        message: "validate.email_length",
+                      },
+                    }}
+                    render={({ field: { onChange, value } }) => {
+                      return (
+                        <Input
+                          onChange={onChange}
+                          value={value}
+                          className="mb-2 mt-2"
+                          placeholder="ana@example.com"
+                        />
+                      );
+                    }}
                   />
+                  {errors.email && (
+                    <span role="alert" className="pt-2 text-red-500">
+                      {t(String(errors.email.message))}
+                    </span>
+                  )}
                 </div>
                 <div className="mt-4">
                   <label className={label()} htmlFor="password">
                     {t("registration.password")}
                   </label>
-                  <Input
-                    type="password"
-                    id="password"
-                    className="mt-2"
+                  <Controller
                     name="password"
-                    value={fields.password}
-                    onChange={handlePassword}
+                    control={control}
+                    rules={{
+                      required: true,
+                      minLength: {
+                        value: 6,
+                        message: "validate.password",
+                      },
+                    }}
+                    render={({ field: { onChange, value } }) => {
+                      return (
+                        <Input
+                          onChange={onChange}
+                          value={value}
+                          type="password"
+                          className="mt-2"
+                        />
+                      );
+                    }}
                   />
+                  {errors.password && (
+                    <span role="alert" className="pt-2 text-red-500">
+                      {t(String(errors.password.message))}
+                    </span>
+                  )}
                 </div>
                 <div className="mt-4">
                   <label className={label()} htmlFor="confirmPassword">
                     {t("registration.confirm-password")}
                   </label>
-                  <Input
-                    type="password"
-                    id="confirmPassword"
-                    className="mt-2"
-                    name="password"
-                    value={fields.confirmPassword}
-                    onChange={handleConfirmPassword}
+                  <Controller
+                    name="confirm_password"
+                    control={control}
+                    rules={{
+                      required: true,
+                      validate: (value) => {
+                        if (watch("password") != value) {
+                          return "validate.confirm_password";
+                        }
+                      },
+                    }}
+                    render={({ field: { onChange, value } }) => {
+                      return (
+                        <Input
+                          onChange={onChange}
+                          value={value}
+                          type="password"
+                          className="mt-2"
+                        />
+                      );
+                    }}
                   />
+                  {errors.confirm_password && (
+                    <span role="alert" className="pt-2 text-red-500">
+                      {t(String(errors.confirm_password.message))}
+                    </span>
+                  )}
                 </div>
                 <Button className={Regbtn()} type="submit">
                   {t("registration.sign-up")}

@@ -20,7 +20,6 @@ import { useQuery } from "@tanstack/react-query";
 const AuthBtn = () => {
   const { t } = useTranslation();
   const user = useAtomValue(userAtom);
-  // const [userInfo, setUserInfo] = useState({ name: "", avatar: "" });
 
   const userId = user?.user?.id as string;
 

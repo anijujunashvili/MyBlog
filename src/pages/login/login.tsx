@@ -1,45 +1,25 @@
 import { Input } from "@/components/ui/input.tsx";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { ChangeEvent, FormEvent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { loginBtn, cont, OuterCont, label } from "./login.style.ts";
-import { login } from "@/supabase/auth/index.ts";
-import { useMutation } from "@tanstack/react-query";
+import { useForm, Controller } from "react-hook-form";
+import { loginType } from "./types/login.types.ts";
+import { useLogin } from "./hooks/use-login.ts";
 
 export const LoginPage = () => {
-  const [fields, setFields] = useState({ email: "", password: "" });
-  const { t } = useTranslation();
-  const handleEmail = (e: ChangeEvent<HTMLInputElement>) => {
-    const value = (e.target as HTMLInputElement).value;
-
-    setFields({
-      email: value,
-      password: fields.password,
-    });
-  };
-
-  const { mutate: handleLogin, isError } = useMutation({
-    mutationKey: ["login"],
-    mutationFn: login,
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<loginType>({
+    defaultValues: { email: "", password: "" },
+    mode: "onChange",
   });
 
-  const handlePassword = (e: ChangeEvent<HTMLInputElement>) => {
-    const value = (e.target as HTMLInputElement).value;
+  const { isError, onSubmit } = useLogin();
 
-    setFields({
-      email: fields.email,
-      password: value,
-    });
-  };
-
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    console.log(fields);
-    if (!!fields.email && !!fields.password) {
-      handleLogin(fields);
-    }
-  };
+  const { t } = useTranslation();
 
   return (
     <>
@@ -49,35 +29,76 @@ export const LoginPage = () => {
             <div className="text-center text-2xl font-bold">
               {t("login.login-headline")}
             </div>
-            {isError ? "სამწუხაროდ პაროლი ან მეილი არ არის სწორი" : ""}
+            {isError ? t("validate.login_error") : ""}
             <div>
-              <form onSubmit={handleSubmit}>
+              <form onSubmit={handleSubmit(onSubmit)}>
                 <div>
                   <label className={label()} htmlFor="email">
                     {t("login.email")}
                   </label>
-                  <Input
-                    type="text"
-                    id="email"
-                    className="mt-2"
+                  <Controller
                     name="email"
-                    value={fields.email}
-                    onChange={handleEmail}
-                    placeholder="ana@example.com"
+                    control={control}
+                    rules={{
+                      required: true,
+                      pattern: {
+                        value: /\S+@\S+\.\S+/,
+                        message: "validate.email",
+                      },
+                      minLength: {
+                        value: 13,
+                        message: "validate.email_length",
+                      },
+                    }}
+                    render={({ field: { onChange, value, onBlur } }) => {
+                      return (
+                        <Input
+                          onChange={onChange}
+                          onBlur={onBlur}
+                          value={value}
+                          className="mb-2 mt-2"
+                          placeholder="ana@example.com"
+                        />
+                      );
+                    }}
                   />
+                  {errors.email && (
+                    <span role="alert" className="pt-2 text-red-500">
+                      {t(String(errors.email.message))}
+                    </span>
+                  )}
                 </div>
-                <div className="mt-4">
+                <div className="mb-2 mt-4">
                   <label className={label()} htmlFor="password">
                     {t("login.password")}
                   </label>
-                  <Input
-                    type="password"
-                    id="password"
-                    className="mt-2"
+                  <Controller
                     name="password"
-                    value={fields.password}
-                    onChange={handlePassword}
+                    control={control}
+                    rules={{
+                      required: true,
+                      minLength: {
+                        value: 6,
+                        message: "validate.password",
+                      },
+                    }}
+                    render={({ field: { onChange, value, onBlur } }) => {
+                      return (
+                        <Input
+                          onChange={onChange}
+                          onBlur={onBlur}
+                          value={value}
+                          type="password"
+                          className="mt-2"
+                        />
+                      );
+                    }}
                   />
+                  {errors.password && (
+                    <span role="alert" className="pt-2 text-red-500">
+                      {t(String(errors.password.message))}
+                    </span>
+                  )}
                 </div>
                 <Button className={loginBtn()} type="submit">
                   {t("login.login")}

@@ -22,6 +22,9 @@ import AuthorEn from "./en/author-page.json";
 import ProfileKa from "./ka/profile.json";
 import ProfileEn from "./en/profile.json";
 
+import ValidationKa from "./ka/validation.json";
+import ValidationEn from "./en/validation.json";
+
 i18n.use(initReactI18next).init({
   resources: {
     ka: {
@@ -33,6 +36,7 @@ i18n.use(initReactI18next).init({
         registration: RegKa,
         author: AuthorKa,
         profile: ProfileKa,
+        validate: ValidationKa,
       },
     },
     en: {
@@ -44,6 +48,7 @@ i18n.use(initReactI18next).init({
         registration: RegEn,
         author: AuthorEn,
         profile: ProfileEn,
+        validate: ValidationEn,
       },
     },
   },
