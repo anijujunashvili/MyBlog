@@ -30,3 +30,13 @@ export const addBlog = async (payload: BlogType) => {
       });
   }
 };
+
+export const getBlogList = async () => {
+  try {
+    const result = await supabase.from("blogs").select("*");
+    // console.log("get blog list", result.data);
+    return result.data;
+  } catch (error) {
+    console.log("Error during get blog list", error);
+  }
+};
