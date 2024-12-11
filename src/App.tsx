@@ -16,7 +16,9 @@ import { supabase } from "@/supabase";
 import { userAtom } from "./store/auth";
 import { useSetAtom } from "jotai";
 import AuthGuard from "@/components/route-guards/auth";
+import WriteGuard from "@/components/route-guards/write";
 import { UserProfilePage } from "@/pages/profile";
+import { WriteBlog } from "@/pages/write/views/add-blog";
 
 const queryClient = new QueryClient();
 
@@ -53,6 +55,15 @@ function App() {
                   }
                 />
                 <Route path="home" element={<HomePageView />} />
+                WriteBlog
+                <Route
+                  path="write"
+                  element={
+                    <WriteGuard>
+                      <WriteBlog />
+                    </WriteGuard>
+                  }
+                />
                 <Route path="about" element={<AboutPage />} />
                 <Route
                   path="login"

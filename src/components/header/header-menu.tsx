@@ -17,7 +17,7 @@ const HeaderMenu = () => {
         </NavLink>
       </li>
       <li className="mr-6">
-        <NavLink className={MenuStyle} to="/">
+        <NavLink className={MenuStyle} to="/write">
           {t("header.write")}
         </NavLink>
       </li>
