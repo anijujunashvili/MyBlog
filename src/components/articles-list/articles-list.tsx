@@ -1,20 +1,15 @@
 import { Link } from "react-router-dom";
-import {
-  // blogTabs,
-  articleCont,
-  articleImg,
-  artHead,
-} from "./articles.style.ts";
-import { getBlogList } from "@/supabase/blogs";
-import { useQuery } from "@tanstack/react-query";
-import i18n from "i18next";
+import { articleCont, articleImg, artHead } from "./articles.style.ts";
 
-export const ArticlesList = () => {
+import i18n from "i18next";
+import dayjs from "dayjs";
+import { PropsWithChildren } from "react";
+import { Props, Blog } from "./types/interface.ts";
+
+export const ArticlesList: React.FC<PropsWithChildren<Props>> = ({
+  blogs,
+}: Props) => {
   const currentLanguage = i18n.language;
-  const { data: blogs } = useQuery({
-    queryKey: ["getBlogs", currentLanguage],
-    queryFn: getBlogList,
-  });
 
   return (
     <>
@@ -25,10 +20,18 @@ export const ArticlesList = () => {
           </h1>
         </div>
       ) : (
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        blogs?.map((blog: any) => {
+        blogs?.map((blog: Blog) => {
           const imgPath = import.meta.env.VITE_SUPABASE_STORAGE_URL;
-
+          const createdDate = dayjs(blog.created_at);
+          const nowDate = dayjs();
+          const hoursDiff = nowDate.diff(createdDate, "hour");
+          const minuteDiff = nowDate.diff(createdDate, "minute");
+          const created =
+            hoursDiff > 24
+              ? createdDate.format("HH:mm - DD/MM/YYYY")
+              : hoursDiff > 1
+                ? `${hoursDiff} hours ago`
+                : `${minuteDiff} minutes ago`;
           return (
             <Link to={`blog/${blog.id}`} key={blog.id}>
               <div className={articleCont()}>
@@ -50,9 +53,9 @@ export const ArticlesList = () => {
                       : String(blog.title_en)}
                   </div>
                   <div className={artHead()}>
-                    John Doe
-                    <span>-</span>
-                    <span>{String(blog.created_at)}</span>
+                    <span>John Doe</span>
+                    <span>&#8226;</span>
+                    <span>{created}</span>
                   </div>
                 </div>
                 <div className="p-6 pt-0">

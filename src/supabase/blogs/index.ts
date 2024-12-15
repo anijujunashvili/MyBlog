@@ -31,10 +31,22 @@ export const addBlog = async (payload: BlogType) => {
   }
 };
 
-export const getBlogList = async () => {
+export const getBlogList = async (search = "", lang = "en") => {
   try {
-    const result = await supabase.from("blogs").select("*");
-    // console.log("get blog list", result.data);
+    const searchField = lang === "en" ? "title_en" : "title_en";
+
+    const result =
+      search === ""
+        ? await supabase
+            .from("blogs")
+            .select("*")
+            .order("created_at", { ascending: false })
+        : await supabase
+            .from("blogs")
+            .select("*")
+            .ilike(searchField, `%${search ?? ""}%`)
+            .order("created_at", { ascending: false });
+
     return result.data;
   } catch (error) {
     console.log("Error during get blog list", error);
